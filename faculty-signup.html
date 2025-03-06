@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
+            overflow-y: auto;
+        }
+
+        .container {
+            display: flex;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 900px;
+            align-items: center;
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .form-container {
+            flex: 1;
+            padding: 20px;
+        }
+
+        h2 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        input:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        p a {
+            text-decoration: none;
+            color: #5a189a;
+            font-weight: 500;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+
+         /* Modal Styles */
+         .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .modal button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="image-container">
+        <img src="https://static.vecteezy.com/system/resources/previews/045/374/829/non_2x/working-from-home-illustration-an-individual-embodies-the-comfort-of-home-offices-with-leisure-elements-in-a-harmoniously-designed-workspace-illustration-vector.jpg" alt="Illustration">
+    </div>
+  <div class="form-container">
+
+    <form id="signupForm">
+      <label>Name</label>
+      <input type="text" id="name" placeholder="Enter your full name"  required>
+
+      <label>Email</label>
+      <input type="email" id="email"  placeholder="Enter your email" required>
+
+      <label>Phone</label>
+      <input type="tel" id="phone"  placeholder="Enter your phone number" required>
+     
+      <label>Department</label>
+      <input type="text" id="department"  placeholder="Enter your department" required>
+
+      <label>Fivefold Activity</label>
+      <input type="text" id="fivefold"  placeholder="Enter your Fivefold activity" required>
+
+      <label>Smartcard ID</label>
+      <input type="text" id="username"  placeholder="Enter your Smartcard ID" required>
+
+      <label>Password</label>
+        <div class="password-container">
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <span class="toggle-password" onclick="togglePassword()">👁️</span>
+       </div>
+
+      <label>Select a Security Question</label>
+      <select id="securityQuestion" name="securityQuestion" required>
+        <option value="" disabled selected>Select a Security Question</option>
+        <option value="mother_maiden_name">What is your mother's maiden name?</option>
+        <option value="pet_name">What was the name of your first pet?</option>
+        <option value="favorite_teacher">Who was your favorite teacher in school?</option>
+        <option value="birth_city">In which city were you born?</option>
+      </select>
+
+      <label>Security Answer</label>
+      <input type="text" id="securityAnswer" placeholder="Enter your answer" required>
+      
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <p id="modalMessage">Signup Successful!</p>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+    <script>
+       function togglePassword() {
+            const passwordField = document.getElementById("password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+            } else {
+                passwordField.type = "password";
+            }
+        }
+
+
+    function showModal(message) {
+        document.getElementById("modalMessage").innerText = message;
+        document.getElementById("successModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("successModal").style.display = "none";
+        window.location.href = 'login.html'; 
+    }
+      document.addEventListener('DOMContentLoaded', function() {
+          console.log("🚀 JavaScript Loaded!"); 
+  
+          const form = document.getElementById('signupForm');
+  
+          if (!form) {
+              console.error("❌ Form with ID 'signupForm' NOT FOUND!");
+              return;
+          }
+  
+          form.addEventListener('submit', async function(event) {
+              event.preventDefault(); 
+              console.log("📩 Submit button clicked!"); 
+  
+              
+              const formData = {
+                  name: document.getElementById('name').value,
+                  email: document.getElementById('email').value,
+                  phone: document.getElementById('phone').value,
+                  department: document.getElementById('department').value,
+                  fivefold: document.getElementById('fivefold').value,
+                  username: document.getElementById('username').value,
+                  password: document.getElementById('password').value,
+                  securityQuestion: document.getElementById('securityQuestion').value,
+                  securityAnswer: document.getElementById('securityAnswer').value
+              };
+  
+              console.log("📨 Sending Data:", formData); 
+  
+              try {
+                  const response = await fetch('http://localhost:5000/api/faculty/submit-faculty-signup', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(formData)
+                  });
+  
+                  const result = await response.json(); 
+                  console.log(" Response Received:", result); 
+  
+                  showModal(result.message); 
+        } catch (error) {
+            showModal('An error occurred. Please try again.');
+        }
+    });
+      });
+  </script>
+  
+  </div>
+</body>
+</html>
+
+

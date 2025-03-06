@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(#405054, #d7e3e7);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h2 {
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #chatContainer {
+            display: flex;
+            flex-direction: row;
+            width: 90%;
+            max-width: 1200px;
+            height: 650px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        #studentSection {
+    height: 100vh; 
+    overflow-y: auto; 
+}
+
+#studentList {
+    max-height: 80vh; 
+    overflow-y: auto; 
+    padding-right: 5px; 
+}
+
+#studentSearch {
+    margin-bottom: 10px; 
+    padding: 8px;
+    width: 90%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+        #studentList {
+    width: 90%;
+    padding: 10px;
+    background: #d7e3e7;
+    border-right: 2px solid #405054;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+/* 🔹 Search Bar Styling */
+#studentSearch {
+    width: 90%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+        .student {
+            padding: 10px;
+            margin: 5px;
+            background: #70a1ff;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 90%;
+            transition: 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student:hover {
+            background: #1e90ff;
+        }
+
+        .badge {
+            background: red;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 50%;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        #chatSection {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        #chatBox {
+            height: 85%;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .faculty-msg {
+            background: #7bed9f;
+            align-self: flex-end;
+            text-align: right;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 10px 10px 0 10px;
+        }
+
+        .student-msg {
+            background: #70a1ff;
+            align-self: flex-start;
+            text-align: left;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 10px 10px 10px 0;
+        }
+
+        #chatInputContainer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-top: 2px solid #405054;
+            width: 100%;
+        }
+
+        #messageInput {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #sendButton {
+            padding: 10px 15px;
+            background: #0a3a51;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #sendButton:hover {
+            background: #3276a7;
+        }
+
+        .date-header {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 12px;
+    font-weight: bold;
+    color: gray;
+    background: #f0f0f0;
+    padding: 5px;
+    border-radius: 10px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.message {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 5px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.faculty-msg {
+    background: #467d1b;
+    align-self: flex-end;
+}
+
+.student-msg {
+    background:  #522525;
+    align-self: flex-start;
+}
+
+.timestamp {
+    display: block;
+    font-size: 10px;
+    text-align: right;
+    color: rgb(255, 255, 255);
+    margin-top: 3px;
+}
+
+    </style>
+</head>
+<body>
+
+    <div id="chatContainer">
+        <div id="studentSection">
+            <input type="text" id="studentSearch" placeholder="Search student..." onkeyup="filterStudentList()" />
+            <div id="studentList">
+                <h3>Students</h3>
+            </div>
+        </div>
+        
+
+        <div id="chatSection">
+            <h2>Faculty Chat</h2>
+            <p><strong>Welcome, <span id="facultyName"></span></strong></p>
+            <h3 id="chatWith">Select a student to start chat</h3>
+            <div id="chatBox"></div>
+            <div style="display: flex;">
+                <input type="text" id="messageInput" placeholder="Type your message...">
+                <button id="sendButton" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    const socket = io("http://localhost:5000");
+    let selectedStudentEmail = null;
+    let studentListData = [];
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const facultyName = localStorage.getItem("facultyName") || "Faculty";
+        document.getElementById("facultyName").textContent = facultyName; 
+        fetchStudentList();
+    });
+
+    function filterStudentList() {
+    const searchQuery = document.getElementById("studentSearch").value.toLowerCase();
+    const studentItems = document.querySelectorAll("#studentList .student");
+
+    studentItems.forEach(item => {
+        item.style.display = item.dataset.name.includes(searchQuery) ? "block" : "none";
+    });
+}
+
+
+
+    function fetchStudentList() {
+        const facultyEmail = localStorage.getItem("facultyEmail");
+
+        fetch(`http://localhost:5000/api/chats/student-list?facultyEmail=${facultyEmail}`)
+            .then(res => res.json())
+            .then(studentList => {
+                studentListData = studentList;
+                renderStudentList();
+            })
+            .catch(error => console.error("Error fetching student list:", error));
+    }
+
+    function renderStudentList() {
+    const studentSection = document.getElementById("studentList");
+    studentSection.innerHTML = "<h3>Students</h3>";
+
+    studentListData.sort((a, b) => b.unreadCount - a.unreadCount);
+
+    studentListData.forEach(student => {
+        let div = document.createElement("div");
+        div.classList.add("student");
+        div.textContent = student.name;
+        div.dataset.name = student.name.toLowerCase(); 
+
+        let badge = null;
+        if (student.unreadCount > 0 && student.email !== selectedStudentEmail) {
+            badge = document.createElement("span");
+            badge.classList.add("badge");
+            badge.textContent = student.unreadCount;
+            div.appendChild(badge);
+        }
+
+        div.onclick = () => {
+            selectStudent(student.email, student.name);
+        };
+
+        studentSection.appendChild(div);
+    });
+}
+
+    function selectStudent(email, name) {
+    selectedStudentEmail = email;
+    document.getElementById("chatWith").textContent = `Chat with ${name}`;
+
+    // Mark messages as read
+    fetch("/api/chats/mark-as-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ facultyEmail: localStorage.getItem("facultyEmail"), studentEmail: selectedStudentEmail })
+    }).then(() => {
+        loadChatHistory();
+        fetchStudentList(); // Refresh student list to remove unread count
+    });
+}
+
+
+    function sendMessage() {
+        if (!selectedStudentEmail) {
+            alert("Please select a student first!");
+            return;
+        }
+
+        const facultyEmail = localStorage.getItem("facultyEmail");
+        const messageInput = document.getElementById("messageInput");
+
+        const messageData = {
+            senderEmail: facultyEmail,
+            receiverEmail: selectedStudentEmail,
+            message: messageInput.value
+        };
+
+        socket.emit("sendMessage", messageData);
+        messageInput.value = "";
+    }
+
+    socket.on("receiveMessage", (data) => {
+    displayMessage(data);
+
+    
+    if (data.senderEmail !== localStorage.getItem("facultyEmail")) { 
+        const student = studentListData.find(s => s.email === data.senderEmail);
+        if (student) {
+            student.unreadCount += 1;
+        } else {
+            studentListData.unshift({ email: data.senderEmail, name: data.senderName, unreadCount: 1 });
+        }
+        renderStudentList();
+    }
+});
+
+function displayMessage(data) {
+    const chatBox = document.getElementById("chatBox");
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message");
+    messageElement.classList.add(data.senderEmail === localStorage.getItem("facultyEmail") ? "faculty-msg" : "student-msg");
+
+    const messageDate = new Date(data.timestamp);
+
+    // Format: 25 Feb 2025
+    const formattedDate = messageDate.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+
+    // Format: 08:51 AM
+    const formattedTime = messageDate.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+
+    // Check if a new date header is needed
+    if (!chatBox.lastChild || chatBox.lastChild.dataset.date !== formattedDate) {
+        const dateHeader = document.createElement("div");
+        dateHeader.classList.add("date-header");
+        dateHeader.textContent = formattedDate;
+        dateHeader.dataset.date = formattedDate;
+        chatBox.appendChild(dateHeader);
+    }
+
+    // Append message with timestamp
+    messageElement.innerHTML = `<p>${data.message}</p><span class="timestamp">${formattedTime}</span>`;
+    messageElement.dataset.date = formattedDate;
+    chatBox.appendChild(messageElement);
+
+    // Auto-scroll to the latest message
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+
+
+    function loadChatHistory() {
+        fetch(`/api/chats/history?facultyEmail=${localStorage.getItem("facultyEmail")}&studentEmail=${selectedStudentEmail}`)
+            .then(response => response.json())
+            .then(messages => {
+                document.getElementById("chatBox").innerHTML = "";
+                messages.forEach(displayMessage);
+            })
+            .catch(error => console.error("Error loading chat history:", error));
+    }
+    //  New function to group messages by date
+function renderChatMessages(messages) {
+    const chatBox = document.getElementById("chatBox");
+    chatBox.innerHTML = "";
+    let lastDate = "";
+
+    messages.forEach(msg => {
+        const messageDate = new Date(msg.timestamp).toLocaleDateString("en-IN", {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+
+        if (messageDate !== lastDate) {
+            lastDate = messageDate;
+            const dateHeader = document.createElement("div");
+            dateHeader.classList.add("date-header");
+            dateHeader.textContent = messageDate;
+            chatBox.appendChild(dateHeader);
+        }
+
+        displayMessage(msg);
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+</script>
+
+</html>

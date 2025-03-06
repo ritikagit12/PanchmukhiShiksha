@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intellectual Activities</title>
+  <style>
+  body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #1E90FF, #ADD8E6); /* Gradient from top to bottom */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  padding: 50px 20px;
+  width: 100%;
+}
+
+.header h1 {
+  font-size: 3rem;
+  font-family: "Courier New", monospace; 
+  color: black; 
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  
+  /* New Box Styling */
+  display: inline-block;
+  padding: 10px 25px; 
+  border: 2px solid black; 
+  border-radius: 15px; 
+
+}
+
+.activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.activity {
+  position: relative;
+  display: block;
+  height: 220px;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.activity:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+    .activity:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .activity:nth-child(1) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRW4C-tR_vPBkcIadAh-7o3KfX3jDEqCbNAlg&s');
+    }
+
+    .activity:nth-child(2) {
+      background-image: url('https://chronicle.brightspotcdn.com/dims4/default/5a63d49/2147483647/strip/true/crop/792x528+0+36/resize/840x560!/quality/90/?url=http%3A%2F%2Fchronicle-brightspot.s3.us-east-1.amazonaws.com%2Fa3%2F27%2Fd09b3017d21e39d901f54b81978c%2F55c6a744f320f9c830bdf9cbd9d10055.jpg');
+    }
+
+    .activity:nth-child(3) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7umiQb9ze2Dpc4E4AGleQiwnarSjiW6rObA&s');
+    }
+
+    .activity:nth-child(4) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvFd6DGRVUpgKpM86kLdr_x6mi3SzlxO3Sgg&s');
+    }
+
+    .activity:nth-child(5) {
+      background-image: url('https://static.vecteezy.com/system/resources/thumbnails/007/258/726/small/tv-quiz-show-with-participants-who-answer-questions-and-will-get-points-from-the-host-on-the-studio-in-cartoon-illustration-vector.jpg');
+    }
+
+    .activity:nth-child(6) {
+      background-image: url('https://motivationaltrainings.wordpress.com/wp-content/uploads/2017/04/1.jpg');
+    }
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>INTELLECTUAL</h1>
+  </div>
+  <div class="activities">
+    <a href="javascript:void(0);" class="activity">
+      <div class="overlay">RESEARCH</div>
+    </a>
+    <a href="javascript:void(0);" class="activity">
+      <div class="overlay">CRITICAL THINKING</div>
+    </a>
+    <a href="javascript:void(0);" class="activity">
+      <div class="overlay">SEMINARS</div>
+    </a>
+    <a href="javascript:void(0);" class="activity">
+      <div class="overlay">DEBATES</div>
+    </a>
+    <a href="javascript:void(0);" class="activity">
+      <div class="overlay">QUIZZES</div>
+    </a>
+    <a href="javascript:void(0);" class="activity">
+      <div class="overlay">LEADERSHIP SKILLS</div>
+    </a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Details</title>
+    <style>
+      body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: linear-gradient(135deg, #4a90e2, #a0c4ff); 
+    color: #000;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.container {
+    max-width: 1200px;
+    margin: 50px auto;
+    background: #fff4cc; 
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.container:hover {
+    transform: scale(1.02);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #000;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.image {
+    width: 80%;
+    max-width: 400px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 3px solid #007bff;
+}
+
+.info {
+    text-align: left;
+    padding: 15px;
+    font-size: 18px;
+    font-family: 'Courier New', monospace;
+}
+
+.info p {
+    margin: 8px 0;
+    color: #000;
+}
+
+.info span {
+    font-weight: 700; 
+    color: #000;
+}
+
+.info p strong {
+    font-weight: 600; 
+}
+
+.register-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-top: 20px;
+    transition: 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+.register-btn:hover {
+    background: #0056b3;
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5);
+    transform: scale(1.05);
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- This div will be dynamically updated -->
+        <div id="activityDetails">
+            <!-- Default content when no activity is loaded -->
+            <div class="title">Horse Riding</div>
+            <img class="image" src="" alt="Activity Image">
+            <div class="info">
+                <p><span>Time:</span> To be updated</p>
+                <p><span>Faculty:</span> To be updated</p>
+                <p><span>Requirements:</span> To be updated</p>
+                <p><span>Achievements:</span> To be updated</p>
+                <p><span>Duration:</span> To be updated</p>
+                <p><span>Location:</span> <a href="#">Ground</a></p>
+            </div>
+            <a href="#" class="register-btn" onclick="openRegistrationForm()">Register</a>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const activityId = urlParams.get('activity');
+
+        if (activityId) {
+            fetch(`http://localhost:5000/api/practicals/${activityId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('activityDetails');
+                    container.innerHTML = `
+                        <div class="title">${data.title}</div>
+                        <img class="image" src="${data.image}" alt="${data.title}">
+                        <div class="info">
+                            <p><span>Time:</span> ${data.time}</p>
+                            <p><span>Faculty:</span> ${data.faculty}</p>
+                            <p><span>Requirements:</span> ${data.requirements}</p>
+                            <p><span>Achievements:</span> ${data.achievements}</p>
+                            <p><span>Duration:</span> ${data.duration}</p>
+                            <p><span>Location:</span> ${data.location}</p>
+                        </div>
+                        <a href="registration.html" class="register-btn" onclick="openRegistrationForm()">Register</a>
+                    `;
+                })
+                .catch(err => {
+                    document.getElementById('activityDetails').innerHTML = `<h1>Error loading activity details</h1>`;
+                    console.error(err);
+                });
+        } else {
+            document.getElementById('activityDetails').innerHTML = `<h1>Invalid Activity</h1>`;
+        }
+
+        
+    </script>
+</body>
+</html>

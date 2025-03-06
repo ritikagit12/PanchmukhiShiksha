@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Attendance</title>
+    <style>
+       /* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #e3f2fd, #bbdefb);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Heading */
+h1 {
+    color: #003399;
+    margin-top: 20px;
+    font-size: 28px;
+}
+
+h3 {
+    color: #0056b3;
+    font-size: 18px;
+}
+
+/* Table Styling */
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Table Headers */
+th {
+    background: #0044cc;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+}
+
+/* Table Data */
+td {
+    padding: 12px;
+    font-size: 15px;
+    color: #333;
+    transition: background 0.3s;
+}
+
+/* Zebra Striping */
+tr:nth-child(even) {
+    background: #f2f7ff;
+}
+
+/* Hover Effect */
+tr:hover {
+    background: #cce4ff;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <h1>My Attendance</h1>
+    <!-- <h3>Student Name: <span id="studentName"></span></h3> -->
+    <h3>SmartCard ID: <span id="smartcardId"></span></h3>
+
+    <table id="attendanceTable">
+        <thead id="tableHead">
+            <!-- Table headers will be added dynamically -->
+        </thead>
+        <tbody id="tableBody">
+            <!-- Table rows will be added dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+        alert("User data not found! Please log in again.");
+        return;
+    }
+
+    const user = JSON.parse(userData);
+    const smartcardId = user.username; 
+
+    document.getElementById("smartcardId").innerText = smartcardId;
+
+    try {
+        const response = await fetch("http://localhost:5000/api/attendance/my-attendance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ smartCardId: smartcardId })
+        });
+
+        const result = await response.json();
+        if (result.error) {
+            alert(result.error);
+            return;
+        }
+
+        const { fivefolds, data } = result;
+        const tableHead = document.getElementById("tableHead");
+        const tableBody = document.getElementById("tableBody");
+
+        // ✅ Clear previous table data
+        tableHead.innerHTML = "";
+        tableBody.innerHTML = "";
+
+        //  Create table headers
+        let headerRow = "<tr><th>Date</th>";
+        fivefolds.forEach(fivefold => {
+            headerRow += `<th>${fivefold}</th>`;
+        });
+        headerRow += "</tr>";
+        tableHead.innerHTML = headerRow;
+
+        //  Populate table rows dynamically
+        data.forEach(record => {
+            let row = `<tr><td>${record.date}</td>`;
+            fivefolds.forEach(fivefold => {
+                row += `<td>${record[fivefold] || "N/A"}</td>`; 
+            });
+            row += "</tr>";
+            tableBody.innerHTML += row;
+        });
+
+    } catch (error) {
+        console.error("Error fetching attendance:", error);
+        alert("Error fetching attendance. Try again later.");
+    }
+});
+
+
+    </script>
+
+</body>
+</html>

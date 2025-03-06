@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile (Admin)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            display: flex;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            width: 800px;
+            height: 500px;
+            animation: fadeIn 0.5s ease-in-out;
+            color: black;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .form-container {
+            flex: 2;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            transition: border 0.3s;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        input:focus {
+            border: 1px solid #80bdff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        button {
+            background: #0056b3;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background: #004085;
+            transform: translateY(-2px);
+        }
+        .cancel-btn {
+            background: #dc3545;
+        }
+        .cancel-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="https://cdni.iconscout.com/illustration/premium/thumb/edit-user-profile-illustration-4468944-3721869.png" alt="Admin Profile">
+        </div>
+        <div class="form-container">
+            <h2>Edit Profile (Admin)</h2>
+            <form id="editProfileForm">
+                <label for="username">Admin ID</label>
+                <input type="text" id="username" name="username" readonly>
+
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" required>
+
+                <button type="submit">Update Profile</button>
+            </form>
+            <button class="cancel-btn" onclick="goBack()">Cancel</button>
+        </div>
+    </div>
+    
+    <script>
+        // Load Admin Data
+        document.addEventListener("DOMContentLoaded", async () => {
+            const admin = JSON.parse(localStorage.getItem("admin"));
+
+            if (admin) {
+                document.getElementById("username").value = admin.username; // Readonly
+                document.getElementById("name").value = admin.name;
+                document.getElementById("phone").value = admin.phone;
+            } else {
+                alert("No admin data found!");
+                window.location.href = "dashboard3.html";
+            }
+        });
+
+        // Handle Form Submission (Update Profile)
+        document.getElementById("editProfileForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const phone = document.getElementById("phone").value;
+            const username = document.getElementById("username").value; // Readonly
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/updateAdmin/${username}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, phone }),
+                });
+
+                const text = await response.text();
+                console.log("Response text:", text);
+                const data = JSON.parse(text);
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Failed to update profile");
+                }
+
+                // Update LocalStorage
+                let updatedAdmin = JSON.parse(localStorage.getItem("admin")) || {};
+                updatedAdmin.name = name;
+                updatedAdmin.phone = phone;
+                localStorage.setItem("admin", JSON.stringify(updatedAdmin));
+
+                alert("Profile updated successfully!");
+                window.location.href = "adminDashboard.html"; // Redirect after update
+            } catch (error) {
+                console.error("Error updating profile:", error);
+                alert("Error updating profile: " + error.message);
+            }
+        });
+
+        // Go Back to Admin Dashboard
+        function goBack() {
+            window.location.href = "adminDashboard.html";
+        }
+    </script>
+</body>
+</html>

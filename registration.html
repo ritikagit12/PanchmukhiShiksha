@@ -1,0 +1,438 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+
+  body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        padding: 10px;
+    }
+
+    .container {
+        background: white;
+        padding: 30px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        max-height: 90vh; 
+        overflow-y: auto; 
+    }
+
+    h2 {
+        text-align: center;
+        color: blue;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+    }
+
+    input, select, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button {
+        background-color: blue;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        border: none;
+        margin-top: 15px;
+    }
+
+    button:hover {
+        background-color:  blue;
+    }
+
+    /* Ensuring smooth scrolling */
+    .container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Modal Styles */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    width: 50%;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+button {
+    background-color: #3399cc;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #2a7bbf;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <h2>Student Registration</h2>
+        <form id="registrationForm" enctype="multipart/form-data">
+            <input type="text" id="name" placeholder="Full Name" required>
+
+            <select id="course" required>
+                <option value="">Select Course</option>
+                <optgroup label="B.A.">
+                    <option value="B.A. (Hons.) / Hons. with Research">B.A. (Hons.) / Hons. with Research</option>
+                    <option value="B.A. (Journalism and Mass Communication)">B.A. (Journalism and Mass Communication)</option>
+                    <option value="B.A. (Hons.) / Hons. with Research (Journalism and Mass Communication)">B.A. (Hons.) / Hons. with Research (Journalism and Mass Communication)</option>
+                    <option value="B.A. (LL.B.)">B.A. (LL.B.)</option>
+                </optgroup>
+                <optgroup label="B.Sc.">
+                    <option value="B.Sc. (Mathematics)">B.Sc. (Mathematics)</option>
+                    <option value="B.Sc. (Mathematics-Phy, Che, Maths, CS, Ele, Stat) (Hons.) / Hons. with Research">B.Sc. (Mathematics-Phy, Che, Maths, CS, Ele, Stat) (Hons.) / Hons. with Research</option>
+                    <option value="B.Sc. (Bio Science)">B.Sc. (Bio Science)</option>
+                    <option value="B.Sc. (Bio Science-Chem, Zoology, Botany) (Hons.) / Hons. with Research">B.Sc. (Bio Science-Chem, Zoology, Botany) (Hons.) / Hons. with Research</option>
+                    <option value="B.Sc. (Geology/Geography)">B.Sc. (Geology/Geography)</option>
+                    <option value="B.Sc. (Geology/Geography) (Hons.) / Hons. with Research">B.Sc. (Geology/Geography) (Hons.) / Hons. with Research</option>
+                    <option value="B.Sc. (Biotechnology)">B.Sc. (Biotechnology)</option>
+                    <option value="B.Sc. (Biotechnology) (Hons.) / Hons. with Research">B.Sc. (Biotechnology) (Hons.) / Hons. with Research</option>
+                    <option value="B.Sc. (Microbiology)">B.Sc. (Microbiology)</option>
+                    <option value="B.Sc. (Microbiology) (Hons.) / Hons. with Research">B.Sc. (Microbiology) (Hons.) / Hons. with Research</option>
+                    <option value="B.Sc. (Home Science)">B.Sc. (Home Science)</option>
+                    <option value="B.Sc. (Home Science) (Hons.) / Hons. with Research">B.Sc. (Home Science) (Hons.) / Hons. with Research</option>
+                    <option value="B.Sc. (Home Science) Food Science and Nutrition">B.Sc. (Home Science) Food Science and Nutrition</option>
+                    <option value="B.Sc. (Home Science) Food Science and Nutrition (Hons.) / Hons. with Research">B.Sc. (Home Science) Food Science and Nutrition (Hons.) / Hons. with Research</option>
+                    <option value="B.Sc. (Data Science)">B.Sc. (Data Science)</option>
+                    <option value="B.Sc. (Aviation Science)">B.Sc. (Aviation Science)</option>
+                    <option value="B.Sc. (Aviation Science) (Hons.)">B.Sc. (Aviation Science) (Hons.)</option>
+                </optgroup>
+                <optgroup label="B.Com. (Bachelor of Commerce)">
+                    <option value="B.Com. (Bachelor of Commerce)">B.Com. (Bachelor of Commerce)</option>
+                    <option value="B.Com. (Bachelor of Commerce) (Hons.) / Hons. with Research">B.Com. (Bachelor of Commerce) (Hons.) / Hons. with Research</option>
+                    <option value="B.Com. (LL.B.)">B.Com. (LL.B.)</option>
+                </optgroup>
+                <optgroup label="BCA">
+                    <option value="BCA">BCA</option>
+                    <option value="BCA (Hons.) / Hons. with Research">BCA (Hons.) / Hons. with Research</option>
+                </optgroup>
+                <optgroup label="BBA">
+                    <option value="BBA">BBA</option>
+                    <option value="BBA (Hons.) / Hons. with Research">BBA (Hons.) / Hons. with Research</option>
+                    <option value="BBA (LL.B.)">BBA (LL.B.)</option>
+                </optgroup>
+                <optgroup label="Bachelor of Social Work">
+                    <option value="Bachelor of Social Work">Bachelor of Social Work</option>
+                    <option value="Bachelor of Social Work (Hons.)">Bachelor of Social Work (Hons.)</option>
+                </optgroup>
+                <optgroup label="B.A. (B.Ed.) (Middle / Secondary)">
+                    <option value="B.A. (B.Ed.) (Middle / Secondary)">B.A. (B.Ed.) (Middle / Secondary)</option>
+                </optgroup>
+                <optgroup label="B.Ed.(B.Sc.) (Middle / Secondary)">
+                    <option value="B.Ed.(B.Sc.) (Middle / Secondary)">B.Ed.(B.Sc.) (Middle / Secondary)</option>
+                </optgroup>
+                <optgroup label="B.Tech">
+                    <option value="B.Tech (Computer Science and Engineering)">B.Tech (Computer Science and Engineering)</option>
+                    <option value="B.Tech (Computer Science-Artificial Intelligence)">B.Tech (Computer Science-Artificial Intelligence)</option>
+                    <option value="B.Tech (Electronics and Communication)">B.Tech (Electronics and Communication)</option>
+                    <option value="B.Tech (Electronics and Instrumentation)">B.Tech (Electronics and Instrumentation)</option>
+                    <option value="B.Tech (Electrical and Electronics)">B.Tech (Electrical and Electronics)</option>
+                    <option value="B.Tech (Information Technology)">B.Tech (Information Technology)</option>
+                    <option value="B.Tech (Bio-Technology)">B.Tech (Bio-Technology)</option>
+                    <option value="B.Tech (Chemical Engineering)">B.Tech (Chemical Engineering)</option>
+                    <option value="B.Tech (Mechatronics)">B.Tech (Mechatronics)</option>
+                </optgroup>
+                <optgroup label="B. Des. (Bachelor of Design)">
+                    <option value="B. Des. (Bachelor of Design)">B. Des. (Bachelor of Design)</option>
+                </optgroup>
+                <optgroup label="B.Arch">
+                    <option value="B.Arch">B.Arch</option>
+                </optgroup>
+            </select>
+
+            <input type="email" id="email" placeholder="Email" required>
+
+           <select id="semester" required>
+                <option value="">Select Semester</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="8">9</option>
+                <option value="8">10</option>
+            </select>
+
+            <input type="text" id="smartcardId" placeholder="Smartcard ID" required>
+            <input type="text" id="phoneNumber" placeholder="Phone Number" required>
+            <input type="text" id="rollNumber" placeholder="Roll Number" required>
+
+             <select id="hostelName" required>
+                <option value="">Select Hostel</option>
+                <option value="Shri Shanta Soudh">Shri Shanta Soudh</option>
+                <option value="Shri Shanta Ayanam">Shri Shanta Ayanam</option>
+                <option value="Shri Shanta Sadam">Shri Shanta Sadam</option>
+                <option value="Shri Shanta Puri">Shri Shanta Puri</option>
+                <option value="Shri Shanta Niveshnam">Shri Shanta Niveshnam</option>
+            </select> 
+
+           <!-- Divided Fivefolds into Three Fields -->
+            <select id="fivefold1">
+                <option value="">Enter 1st Fivefold</option>
+                <option disabled>-- Practical Activity --</option>
+                <option value="Art and Crafts with Fabric">Art and Crafts with Fabric</option>
+                <option value="Jewellery Design">Jewellery Design</option>
+                <option value="Digital Art Lab">Digital Art Lab</option>
+                <option value="FM Radio">FM Radio</option>
+                <option value="Life Skills">Life Skills</option>
+                <option value="Photography Lab">Photography Lab</option>
+                <option value="Soft Material Studies Lab">Soft Material Studies Lab</option>
+                <option value="Stencil Printing">Stencil Printing</option>
+                <option value="Surface Ornamentation">Surface Ornamentation</option>
+                <option value="Woven Design">Woven Design</option>
+                <option value="Yarn Craft">Yarn Craft</option>
+                <option value="Informal Education">Informal Education</option>
+                <option value="Fabric Construction in Textile">Fabric Construction in Textile</option>
+                <option value="Hand Embroidery">Hand Embroidery</option>
+                <option value="Art and Craft with Ornamental Design (2D and 3D)">Art and Craft with Ornamental Design (2D and 3D)</option>
+                <option value="Art and Craft with Ornamental Design (Ropes)">Art and Craft with Ornamental Design (Ropes)</option>
+                <option value="Design for Commercially Profitable Project">Design for Commercially Profitable Project</option>
+                <option value="Extension Programs for Women Empowerment">Extension Programs for Women Empowerment</option>
+                <option value="Nutri Gardening and Post-Harvest Value Addition">Nutri Gardening and Post-Harvest Value Addition</option>
+                <option value="Modernization of Ancient Art by Block Printing">Modernization of Ancient Art by Block Printing</option>
+                <option value="Social Intelligence and Conflict Resolution">Social Intelligence and Conflict Resolution</option>
+                <option value="Personal Finance Advisory-I">Personal Finance Advisory-I</option>
+                <option value="Personal Finance Advisory-II">Personal Finance Advisory-II</option>
+            </select>
+            <select id="fivefold2">
+                <option value="">Enter 2nd Fivefold</option>
+                <option disabled>-- Physical Activity --</option>
+                <option value="Archery">Archery</option>
+                <option value="Athletics">Athletics</option>
+                <option value="Badminton">Badminton</option>
+                <option value="Basketball">Basketball</option>
+                <option value="Cricket">Cricket</option>
+                <option value="Equestrian">Equestrian</option>
+                <option value="Handball">Handball</option>
+                <option value="Hockey">Hockey</option>
+                <option value="Martial Arts">Martial Arts</option>
+                <option value="Banasthali Sewa Dal (BSD)">Banasthali Sewa Dal (BSD)</option>
+                <option value="Kabaddi">Kabaddi</option>
+                <option value="Tennis">Tennis</option>
+                <option value="Kho-Kho">Kho-Kho</option>
+                <option value="Throwball">Throwball</option>
+                <option value="Net Ball">Net Ball</option>
+                <option value="Volleyball">Volleyball</option>
+                <option value="Rope Mallakhamb">Rope Mallakhamb</option>
+                <option value="Weight Training">Weight Training</option>
+                <option value="Shooting">Shooting</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Soft Ball">Soft Ball</option>
+                <option value="Football">Football</option>
+                <option value="Gymnastics">Gymnastics</option>
+                <option value="Combative Sports">Combative Sports</option>
+                <option value="Pol Mallakhamb">Pol Mallakhamb</option>
+                <option value="Squash">Squash</option>
+                <option value="Swimming">Swimming</option>
+                <option value="Table Tennis">Table Tennis</option>
+                <option value="National Service Scheme (NSS)">National Service Scheme (NSS)</option>
+                <option value="National Cadet Corps (NCC)">National Cadet Corps (NCC)</option>
+            </select>
+            <select id="fivefold3">
+                <option value="">Enter 3rd Fivefold</option>
+                <option disabled>-- Aesthetic Activity --</option>
+                <optgroup label="Dance">
+                    <option value="Bharatnatyam">Bharatnatyam</option>
+                    <option value="Kathak">Kathak</option>
+                    <option value="Manipuri">Manipuri</option>
+                    <option value="Folk Dance">Folk Dance</option>
+                </optgroup>
+                <option value="Creative Art">Creative Art</option>
+                <optgroup label="Music-Instrumental">
+                    <option value="Guitar">Guitar</option>
+                    <option value="Orchestra">Orchestra</option>
+                    <option value="Sarod">Sarod</option>
+                    <option value="Sitar">Sitar</option>
+                    <option value="Tabla">Tabla</option>
+                    <option value="Violin">Violin</option>
+                </optgroup>
+                <option value="Music-Vocal">Music-Vocal</option>
+                <option value="Theatre">Theatre</option>
+                <option value="Banasthali Band">Banasthali Band</option>
+            </select>
+
+            <input type="file" id="image" accept="image/*" required>
+            <button id="pay-button">Pay Now</button>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <!-- Registration Success Modal -->
+    <div id="registrationSuccessModal" class="modal">
+        <div class="modal-content">
+            <span class="close close-registration">&times;</span>
+            <h2>Registration Successful!</h2>
+            <p>Your registration has been submitted successfully. Proceeding to payment...</p>
+            <button id="proceedToPayment">Proceed</button>
+        </div>
+    </div>
+
+    <!-- Payment Success Modal -->
+    <div id="paymentSuccessModal" class="modal">
+        <div class="modal-content">
+            <span class="close close-payment">&times;</span>
+            <h2>Payment Successful!</h2>
+            <p>Thank you for registering. Your payment has been received successfully.</p>
+            <button id="dashboardRedirect">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+       document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", document.getElementById('name').value);
+    formData.append("course", document.getElementById('course').value);
+    formData.append("email", document.getElementById('email').value);
+    formData.append("semester", document.getElementById('semester').value);
+    formData.append("smartcardId", document.getElementById('smartcardId').value);
+    formData.append("phoneNumber", document.getElementById('phoneNumber').value);
+    formData.append("rollNumber", document.getElementById('rollNumber').value);
+    formData.append("hostelName", document.getElementById('hostelName').value);
+    
+    const fivefolds = [
+        document.getElementById('fivefold1').value,
+        document.getElementById('fivefold2').value,
+        document.getElementById('fivefold3').value
+    ];
+    formData.append("fivefolds", JSON.stringify(fivefolds));
+    formData.append("image", document.getElementById('image').files[0]);
+
+    try {
+        const response = await fetch('/api/registration/submit-student-registration', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Show Registration Success Modal
+            document.getElementById('registrationSuccessModal').style.display = "block";
+
+            document.getElementById('proceedToPayment').addEventListener('click', async function() {
+                document.getElementById('registrationSuccessModal').style.display = "none";
+
+                // Proceed to Payment
+                const paymentResponse = await fetch("http://localhost:5000/api/payments/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        amount: 500
+                    })
+                });
+
+                const order = await paymentResponse.json();
+
+                const options = {
+                    key: "rzp_test_oyjNAAUXTz8IrE",
+                    amount: order.amount,
+                    currency: "INR",
+                    name: "Panchmukhi Shiksha",
+                    description: "Registration Payment",
+                    order_id: order.id,
+                    handler: async function (response) {
+                        await fetch("http://localhost:5000/api/payments/verify-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                order_id: order.id,
+                                payment_id: response.razorpay_payment_id
+                            })
+                        });
+
+                        // Show Payment Success Modal
+                        document.getElementById('successModal').style.display = "block";
+                    },
+                    prefill: {
+                        email: document.getElementById('email').value,
+                        contact: document.getElementById('phoneNumber').value
+                    },
+                    theme: { color: "#3399cc" }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
+            });
+        } else {
+            alert(result.error || "Registration failed!");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong. Please try again.");
+    }
+});
+
+// Close Registration Modal
+document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('registrationSuccessModal').style.display = "none";
+});
+    </script>
+</body>
+</html> 

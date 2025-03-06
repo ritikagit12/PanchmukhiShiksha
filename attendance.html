@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Attendance</title>
+    <style>
+       /* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f0f4f8, #c9d6ff);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Heading Styles */
+h1 {
+    color: #003366;
+    margin-top: 20px;
+    font-size: 28px;
+    text-transform: uppercase;
+}
+
+h3 {
+    color: #0056b3;
+    font-size: 18px;
+}
+
+/* Table Styling */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Table Headers */
+th {
+    background: #0044cc;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+/* Table Data */
+td {
+    padding: 12px;
+    font-size: 15px;
+    color: #333;
+    transition: background 0.3s;
+}
+
+/* Zebra Striping */
+tr:nth-child(even) {
+    background: #f0f8ff;
+}
+
+/* Hover Effect */
+tr:hover {
+    background: #d6e4ff;
+    transition: 0.3s ease-in-out;
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #0044cc;
+}
+
+/* Buttons */
+button {
+    background: #0044cc;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background: #003399;
+    transform: scale(1.05);
+}
+
+/* Input Date */
+input[type="date"] {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+
+/* Success Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 30%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal button {
+    background: #0a36b9;
+    margin-top: 10px;
+}
+
+.modal button:hover {
+    background: #0a36b9;
+}
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <h1>Mark Attendance</h1>
+    <h3>Date: <span id="dateDisplay"></span></h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>SmartCardId</th>
+                <th>Course</th>
+                <th>Semester</th>
+                <th>Present</th>
+            </tr>
+        </thead>
+        <tbody id="attendanceTable"></tbody>
+    </table>
+
+    <h3>Total Present: <span id="totalPresent">0</span></h3>
+    <h3>Total Absent: <span id="totalAbsent">0</span></h3>
+
+    <button id="submitAttendanceBtn">Submit Attendance</button>
+    <br></br>
+    <label for="attendanceDate">Select Date:</label>
+    <input type="date" id="attendanceDate">
+    <button id="viewAttendanceBtn">View Previous Attendance</button>
+
+    <h3>Previous Attendance</h3>
+    <table id="previousAttendanceTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>SmartCardId</th>
+                <th>Course</th>
+                <th>Semester</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+      <!-- Success Modal -->
+      <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h2>✅ Attendance Submitted Successfully!</h2>
+            <button onclick="closeModal()">OK</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const facultyFivefold = localStorage.getItem("facultyFivefold");
+            if (!facultyFivefold) {
+                console.error("❌ Error: facultyFivefold not found in localStorage!");
+                return;
+            }
+
+            console.log("✅ Faculty Fivefold:", facultyFivefold);
+
+            // Load students after DOM is ready
+            loadStudents(facultyFivefold);
+
+            // Set today's date in "M/D/YYYY" format
+            const today = new Date().toLocaleDateString("en-US");
+            document.getElementById("dateDisplay").innerText = today;
+
+            // Listen for checkbox changes
+            document.addEventListener("change", (event) => {
+                if (event.target.classList.contains("attendanceCheck")) {
+                    updateCounts();
+                }
+            });
+
+            // Attach event listeners
+            document.getElementById("submitAttendanceBtn").addEventListener("click", submitAttendance);
+            document.getElementById("viewAttendanceBtn").addEventListener("click", fetchPreviousAttendance);
+        });
+
+        async function loadStudents(fivefold) {
+            console.log("Fetching students for Fivefold:", fivefold);
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/registration/students?fivefold=${fivefold}`);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                const students = await response.json();
+                console.log("Fetched Students:", students);
+
+                let studentList = document.getElementById("attendanceTable");
+                if (!studentList) {
+                    console.error("❌ Error: attendanceTable element not found in the DOM!");
+                    return;
+                }
+
+                studentList.innerHTML = ""; 
+
+                students.forEach(student => {
+                    let row = `<tr>
+                        <td>${student.name}</td>
+                        <td>${student.smartcardId}</td>
+                        <td>${student.course}</td>
+                        <td>${student.semester}</td>
+                        <td><input type="checkbox" class="attendanceCheck" data-smartcard="${student.smartcardId}"></td>
+                    </tr>`;
+                    studentList.innerHTML += row;
+                });
+
+                updateCounts();
+            } catch (error) {
+                console.error("Error fetching students:", error);
+            }
+        }
+
+        function updateCounts() {
+            let present = document.querySelectorAll(".attendanceCheck:checked").length;
+            let total = document.querySelectorAll(".attendanceCheck").length;
+            document.getElementById("totalPresent").innerText = present;
+            document.getElementById("totalAbsent").innerText = total - present;
+        }
+
+        async function submitAttendance() {
+            const facultyFivefold = localStorage.getItem("facultyFivefold"); 
+            let attendanceData = [];
+
+            document.querySelectorAll(".attendanceCheck").forEach(checkbox => {
+            let row = checkbox.closest("tr"); 
+            attendanceData.push({
+            smartcardId: checkbox.dataset.smartcard,
+            name: row.cells[0].innerText, 
+            course: row.cells[2].innerText,
+            semester: row.cells[3].innerText, 
+            present: checkbox.checked
+    });
+});
+
+
+            // Format date in "M/D/YYYY"
+            const formattedDate = new Date().toLocaleDateString("en-US");
+
+            const data = {
+                date: formattedDate,
+                fivefold: facultyFivefold, 
+                attendance: attendanceData
+            };
+
+            try {
+                const response = await fetch("http://localhost:5000/api/attendance/submit-attendance", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to submit attendance: ${response.status}`);
+                }
+
+                // ✅ Show Success Modal
+                document.getElementById("successModal").style.display = "block";
+            } catch (error) {
+                console.error("Error submitting attendance:", error);
+                alert("Error submitting attendance. Please try again.");
+            }
+        }
+        function closeModal() {
+            document.getElementById("successModal").style.display = "none";
+        }
+
+        async function fetchPreviousAttendance() {
+    const date = document.getElementById("attendanceDate").value;
+    const facultyFivefold = localStorage.getItem("facultyFivefold");
+
+    if (!date) {
+        alert("Please select a date.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:5000/api/attendance/get-attendance", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date, fivefold: facultyFivefold }),
+        });
+
+        const data = await response.json();
+
+        // ✅ Handle non-array responses
+        if (!Array.isArray(data)) {
+            console.error("Expected an array but received:", data);
+            alert(data.message || "Error fetching attendance");
+            return;
+        }
+
+        let tbody = document.querySelector("#previousAttendanceTable tbody");
+        tbody.innerHTML = "";
+
+        data.forEach(student => {
+            let row = `<tr>
+                <td>${student.name}</td>
+                <td>${student.smartcardId}</td>
+                <td>${student.course}</td>
+                <td>${student.semester}</td>
+                <td>${student.present ? "✔ Present" : "✘ Absent"}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        document.getElementById("previousAttendanceTable").style.display = "table";
+    } catch (error) {
+        console.error("Error fetching attendance:", error);
+    }
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aesthetic Activities</title>
+  <style>
+ body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #1E90FF, #ADD8E6); /* Gradient from top to bottom */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  padding: 50px 20px;
+  width: 100%;
+}
+
+.header h1 {
+  font-size: 3rem;
+  font-family: "Courier New", monospace; 
+  color: black; 
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  
+  /* New Box Styling */
+  display: inline-block;
+  padding: 10px 25px; 
+  border: 2px solid black; 
+  border-radius: 15px; 
+
+}
+
+.activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.activity {
+  position: relative;
+  display: block;
+  height: 220px;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.activity:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+
+    .activity:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .activity:nth-child(1) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1lEdJi1E1HFwOq2XZN3U0QPIvomSz0sMHnA&s');
+    }
+
+    .activity:nth-child(2) {
+      background-image: url('https://arjundixitphotos.com/wp-content/uploads/2021/10/adp_1011-1.jpg?w=1568');
+    }
+
+    .activity:nth-child(3) {
+      background-image: url('https://i.ytimg.com/vi/UBYqv21c0Yk/sddefault.jpg');
+    }
+
+    .activity:nth-child(4) {
+      background-image: url('https://th-i.thgim.com/public/migration_catalog/article12588660.ece/alternates/FREE_1200/02smashwini.jpg');
+    }
+
+    .activity:nth-child(5) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiQJoZPGHtVAFnPrNfGX_QvwFvEuZHXP0aUg&s');
+    }
+
+    .activity:nth-child(6) {
+      background-image: url('https://images.unsplash.com/photo-1503095396549-807759245b35?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dGhlYXRyZXxlbnwwfHwwfHx8MA%3D%3D');
+    }
+
+    .activity:nth-child(7) {
+      background-image: url('https://htoindia.com/wp-content/uploads/2018/01/bihu-dance-assam_c30nbk.jpg');
+    }
+
+    .activity:nth-child(8) {
+      background-image: url('https://i.ytimg.com/vi/KnwVvl-Caws/maxresdefault.jpg');
+    }
+
+    .activity:nth-child(9) {
+      background-image: url('https://karnatakatourism.org/wp-content/uploads/2020/05/Dane.jpg');
+    }
+
+    .activity:nth-child(10) {
+      background-image: url('https://i0.wp.com/tanyamunshi.com/wp-content/uploads/2022/01/Tabla.jpeg?fit=914%2C677&ssl=1');
+    }
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>AESTHETIC</h1>
+  </div>
+  <div class="activities">
+    <a href="aesthetic-details.html?activity=Band" class="activity">
+      <div class="overlay">BAND</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Sitar" class="activity">
+      <div class="overlay">SITAR</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Kathak" class="activity">
+      <div class="overlay">KATHAK</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Vocal" class="activity">
+      <div class="overlay">VOCAL</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Manipuri" class="activity">
+      <div class="overlay">MANIPURI</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Theatre" class="activity">
+      <div class="overlay">THEATRE</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Folk" class="activity">
+      <div class="overlay">FOLK</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Orchestra" class="activity">
+      <div class="overlay">ORCHESTRA</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Bharatnatyam" class="activity">
+      <div class="overlay">BHARATNATYA</div>
+    </a>
+    <a href="aesthetic-details.html?activity=Tabla" class="activity">
+      <div class="overlay">TABLA</div>
+    </a>
+  </div>
+</body>
+</html>

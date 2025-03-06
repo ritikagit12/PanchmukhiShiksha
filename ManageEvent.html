@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+        .sidebar {
+            width: 30%;
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            text-align: center;
+        }
+        .event-item {
+            background: #495057;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid #007bff;
+            cursor: pointer;
+            transition: background 0.3s;
+            position: relative;
+        }
+        .event-item:hover {
+            background: #6c757d;
+        }
+        .container {
+            width: 70%;
+            padding: 20px;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #205a99;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .delete-btn {
+            background: red;
+            padding: 5px;
+            position: absolute;
+            right: 3px;
+            top: 40px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        .attendees-list {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            display: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 30%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .modal button {
+            background: #28a745;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Events</h2>
+        <div id="eventList"></div>
+    </div>
+
+    <div class="container">
+        <h2>Manage Events</h2>
+        <input type="text" id="title" placeholder="Event Title" required><br>
+        <input type="text" id="description" placeholder="Description" required><br>
+        <input type="date" id="date" required><br>
+        <input type="text" id="location" placeholder="Location" required><br>
+        <input type="text" id="organizer" placeholder="Organizer Name" required><br>
+        <button onclick="addEvent()">Add Event</button>
+
+        <h3>Event Details</h3>
+        <div id="eventDetails"></div>
+        <div id="attendeesList" class="attendees-list"></div>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalMessage"></h2>
+            <button onclick="closeModal()">OK</button>
+        </div>
+
+        
+    </div>
+    <script>
+        async function fetchEvents() {
+            try {
+                const response = await fetch("http://localhost:5000/api/events");
+                const events = await response.json();
+
+                const eventList = document.getElementById("eventList");
+                eventList.innerHTML = "";
+
+                events.forEach(event => {
+                    const eventItem = document.createElement("div");
+                    eventItem.classList.add("event-item");
+                    eventItem.innerHTML = `
+                        <strong>${event.title}</strong>
+                        <span style="float:right;">${event.attendees.length} Attendees</span>
+                        <button class="delete-btn" onclick="deleteEvent('${event._id}')">X</button>
+                    `;
+                    eventItem.onclick = () => showEventDetails(event);
+                    eventList.appendChild(eventItem);
+                });
+            } catch (error) {
+                console.error("Error fetching events:", error);
+            }
+        }
+
+        async function addEvent() {
+            const title = document.getElementById("title").value;
+            const description = document.getElementById("description").value;
+            const date = document.getElementById("date").value;
+            const location = document.getElementById("location").value;
+            const organizer = document.getElementById("organizer").value;
+
+            const response = await fetch("http://localhost:5000/api/events/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, description, date, location, organizer })
+            });
+
+            if (response.ok) {
+                showModal("Event added successfully!");
+                fetchEvents();
+            } else {
+                alert("Error adding event.");
+            }
+        }
+
+        async function deleteEvent(eventId) {
+            event.stopPropagation(); 
+            const confirmDelete = confirm("Are you sure you want to delete this event?");
+            if (!confirmDelete) return;
+
+            const response = await fetch(`http://localhost:5000/api/events/${eventId}`, { method: "DELETE" });
+
+            if (response.ok) {
+                showModal("Event deleted successfully!");
+                fetchEvents();
+            } else {
+                alert("Error deleting event.");
+            }
+        }
+        function showModal(message) {
+            document.getElementById("modalMessage").innerText = message;
+            document.getElementById("successModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("successModal").style.display = "none";
+        }
+
+        function showEventDetails(event) {
+            const eventDetails = document.getElementById("eventDetails");
+            eventDetails.innerHTML = `
+                <h3>${event.title}</h3>
+                <p><strong>Description:</strong> ${event.description}</p>
+                <p><strong>Date:</strong> ${new Date(event.date).toDateString()}</p>
+                <p><strong>Location:</strong> ${event.location}</p>
+                <p><strong>Organizer:</strong> ${event.organizer}</p>
+                <button onclick="showAttendees('${event._id}')">View Attendees (${event.attendees.length})</button>
+            `;
+        }
+
+        async function showAttendees(eventId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/events/${eventId}/attendees`);
+                const attendees = await response.json();
+
+                const attendeesList = document.getElementById("attendeesList");
+                attendeesList.innerHTML = "<h3>Attendees List</h3><ul>";
+
+                if (attendees.length === 0) {
+                    attendeesList.innerHTML += "<li>No attendees yet.</li>";
+                } else {
+                    attendees.forEach(att => {
+                        attendeesList.innerHTML += `<li><strong>${att.name}</strong> (${att.email})</li>`;
+                    });
+                }
+
+                attendeesList.innerHTML += "</ul>";
+                attendeesList.style.display = "block";
+            } catch (error) {
+                console.error("Error fetching attendees:", error);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchEvents);
+    </script>
+
+</body>
+</html>

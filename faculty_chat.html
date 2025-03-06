@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h2>Faculty Chat</h2>
+    <div id="chatBox"></div>
+    <input type="text" id="answerInput" placeholder="Type your response...">
+    <button onclick="sendResponse()">Send</button>
+
+    <script>
+        const socket = io();
+        const facultyName = "Faculty1";  
+
+        socket.emit("joinRoom", facultyName);
+
+        socket.on("studentMessage", (data) => {
+            document.getElementById('chatBox').innerHTML += `<div><b>${data.studentName}:</b> ${data.message}</div>`;
+        });
+
+        function sendResponse() {
+            let message = document.getElementById('answerInput').value;
+            socket.emit("facultyResponse", { facultyName: facultyName, message: message });
+
+            document.getElementById('chatBox').innerHTML += `<div><b>You:</b> ${message}</div>`;
+            document.getElementById('answerInput').value = "";
+        }
+    </script>
+</body>
+</html>

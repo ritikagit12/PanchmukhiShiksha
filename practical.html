@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practical Activities</title>
+  <style>
+    body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #1E90FF, #ADD8E6); 
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  padding: 50px 20px;
+  width: 100%;
+}
+
+.header h1 {
+  font-size: 3rem;
+  font-family: "Courier New", monospace; 
+  color: black;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  
+  /* New Box Styling */
+  display: inline-block;
+  padding: 10px 25px; 
+  border: 2px solid black; 
+  border-radius: 15px; 
+
+}
+
+.activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.activity {
+  position: relative;
+  display: block;
+  height: 220px;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.activity:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+
+
+    .activity:nth-child(1) {
+      background-image: url('https://needlesnthimbles.com/wp-content/uploads/2021/08/1629118000423.jpeg');
+    }
+
+    .activity:nth-child(2) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjc5MQRWRDRL0mSbCqcJWYBJhsNq_OfmfdQw&s');
+    }
+
+    .activity:nth-child(3) {
+      background-image: url('https://st.depositphotos.com/63571822/54892/i/450/depositphotos_548927284-stock-photo-female-photographer-image-portrait-photographer.jpg');
+    }
+
+    .activity:nth-child(4) {
+      background-image: url('https://www.sanjuancollege.edu/media/sanjuancollegeedu-2023/images/homepage/education-and-training/arts-and-crafts-through-community-learning-center/arts-crafts-clc.jpg');
+    }
+
+    .activity:nth-child(5) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC8RHesM9iFG-RT_2Xos4GSJBABu21W6lEoA&s');
+    }
+
+    .activity:nth-child(6) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdgb8wxWsIKfv-Lo5MvJm50UZLlOf31goAsw&s');
+    }
+
+    .activity:nth-child(7) {
+      background-image: url('https://res.cloudinary.com/hamstech/images/w_2560,h_1936/v1617978736/Hamstech%20App/illustration-in-jewellery-designing-1/illustration-in-jewellery-designing-1.jpg?_i=AA');
+    }
+
+    .activity:nth-child(8) {
+      background-image: url('https://cdn.shopify.com/s/files/1/0562/8792/0217/t/7/assets/126a58f5399e9a51068ce85117583ff9.jpg?v=1655295517');
+    }
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>PRACTICAL</h1>
+  </div>
+  <div class="activities">
+    <a href="practical-details.html?activity=block-printing" class="activity">
+      <div class="overlay">BLOCK-PRINTING</div>
+    </a>
+    <a href="practical-details.html?activity=hand-embroidery" class="activity">
+      <div class="overlay">HAND-EMBROIDERY</div>
+    </a>
+    <a href="practical-details.html?activity=photography" class="activity">
+      <div class="overlay">PHOTOGRAPHY</div>
+    </a>
+    <a href="practical-details.html?activity=yarn-craft" class="activity">
+      <div class="overlay">YARN CRAFT</div>
+    </a>
+    <a href="practical-details.html?activity=art-and-craft-with-fabric" class="activity">
+      <div class="overlay">ART AND CRAFT WITH FABRIC</div>
+    </a>
+    <a href="practical-details.html?activity=fm-radio" class="activity">
+      <div class="overlay">FM-RADIO</div>
+    </a>
+    <a href="practical-details.html?activity=jewellery-design" class="activity">
+      <div class="overlay">JEWELLERY DESIGN</div>
+    </a>
+    <a href="practical-details.html?activity=stencil-printing" class="activity">
+      <div class="overlay">STENCIL PRINTING</div>
+    </a>
+  </div>
+</body>
+</html>
+

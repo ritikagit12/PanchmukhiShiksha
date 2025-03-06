@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+
+/* Active Button Styling */
+button.active {
+    background-color: #092f58;
+    font-weight: bold;
+}
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+
+         /* Modal Styles */
+         .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .modal button:hover {
+            background: #0056b3;
+        }
+
+        /* Confirmation Modal Styles */
+.confirm-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 350px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-modal button {
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px 5px;
+}
+
+.confirm-modal .confirm-btn {
+    background: #28a745;
+    color: white;
+}
+
+.confirm-modal .confirm-btn:hover {
+    background: #218838;
+}
+
+.confirm-modal .cancel-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.confirm-modal .cancel-btn:hover {
+    background: #c82333;
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <p id="modalMessage">Signup Successful!</p>
+        <button onclick="closeModal()">OK</button>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="confirm-modal">
+    <div class="confirm-modal-content">
+        <p id="confirmMessage">Are you sure you want to proceed?</p>
+        <button class="confirm-btn" onclick="confirmAction()">OK</button>
+        <button class="cancel-btn" onclick="closeConfirmModal()">Cancel</button>
+    </div>
+</div>
+
+
+    <h2>Admin Dashboard</h2>
+
+    <button id="viewFaculty">View All Faculty</button>
+    <button id="viewStudents">View All Students</button>
+
+    <div id="data-container"></div>
+
+    <script>
+        function showModal(message) {
+            document.getElementById("modalMessage").innerText = message;
+            document.getElementById("successModal").style.display = "flex";
+        }
+    
+        function closeModal() {
+            document.getElementById("successModal").style.display = "none";
+        }
+    
+        function showConfirmModal(message, onConfirm) {
+            document.getElementById("confirmMessage").innerText = message;
+            document.getElementById("confirmModal").style.display = "flex";
+            window.confirmCallback = onConfirm; 
+        }
+    
+        function confirmAction() {
+            if (typeof window.confirmCallback === "function") {
+                window.confirmCallback(); 
+            }
+            closeConfirmModal();
+        }
+    
+        function closeConfirmModal() {
+            document.getElementById("confirmModal").style.display = "none";
+        }
+    
+        // Function to fetch and display faculty
+        async function fetchFaculty() {
+            try {
+                const response = await fetch('http://localhost:5000/api/faculty/all');
+                const data = await response.json();
+    
+                let table = `<table>
+                    <tr>
+                        <th>Name</th>
+                        <th>SmartCardID</th>
+                        <th>FiveFold</th>
+                        <th>Department</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>`;
+    
+                data.forEach(faculty => {
+                    table += `<tr>
+                        <td>${faculty.name}</td>
+                        <td>${faculty.username}</td>
+                        <td>${faculty.fivefold}</td>
+                        <td>${faculty.department}</td>
+                        <td>${faculty.email}</td>
+                        <td><button class="delete-btn" onclick="confirmDeleteFaculty('${faculty.username}')">Delete</button></td>
+                    </tr>`;
+                });
+    
+                table += `</table>`;
+                document.getElementById('data-container').innerHTML = table;
+                toggleActiveButton(document.getElementById("viewFaculty"));
+            } catch (error) {
+                console.error("Error fetching faculty:", error);
+            }
+        }
+    
+        // Function to confirm and delete faculty
+        function confirmDeleteFaculty(username) {
+            showConfirmModal(`Are you sure you want to delete ${username}?`, function () {
+                deleteFaculty(username);
+            });
+        }
+    
+        async function deleteFaculty(username) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/faculty/${username}`, {
+                    method: 'DELETE',
+                });
+    
+                if (response.ok) {
+                    showModal("Faculty deleted successfully!"); 
+                    fetchFaculty(); 
+                } else {
+                    showModal("An error occurred. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error deleting faculty:", error);
+            }
+        }
+    
+        // Function to fetch and display students
+        async function fetchStudents() {
+            try {
+                const response = await fetch('http://localhost:5000/api/student/all'); 
+                const data = await response.json();
+    
+                let table = `<table>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Action</th>
+                    </tr>`;
+    
+                data.forEach(student => {
+                    table += `<tr>
+                        <td>${student.username}</td>
+                        <td>${student.email}</td>
+                        <td>${student.course}</td>
+                        <td><button class="delete-btn" onclick="confirmDeleteStudent('${student.username}')">Delete</button></td>
+                    </tr>`;
+                });
+    
+                table += `</table>`;
+                document.getElementById('data-container').innerHTML = table;
+                toggleActiveButton(document.getElementById("viewStudents"));
+            } catch (error) {
+                console.error("Error fetching students:", error);
+            }
+        }
+    
+        // Function to confirm and delete student
+        function confirmDeleteStudent(username) {
+            showConfirmModal(`Are you sure you want to delete ${username}?`, function () {
+                deleteStudent(username);
+            });
+        }
+    
+        async function deleteStudent(username) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/student/${username}`, {
+                    method: 'DELETE',
+                });
+    
+                if (response.ok) {
+                    showModal("Student deleted successfully!"); 
+                    fetchStudents(); // Refresh student list
+                } else {
+                    showModal("An error occurred. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error deleting student:", error);
+            }
+        }
+    
+        // Highlight active button
+        function toggleActiveButton(activeButton) {
+            document.getElementById("viewStudents").classList.remove("active");
+            document.getElementById("viewFaculty").classList.remove("active");
+            activeButton.classList.add("active");
+        }
+    
+        // Load faculty by default when the page opens
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchFaculty();
+        });
+    
+        document.getElementById('viewStudents').addEventListener('click', fetchStudents);
+        document.getElementById('viewFaculty').addEventListener('click', fetchFaculty);
+    </script>
+    
+
+</body>
+</html>

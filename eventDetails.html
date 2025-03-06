@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <style>
+        /* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #e3f2fd, #bbdefb);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Container Styling */
+.container {
+    background: #ffffff;
+    max-width: 1000px;
+    width: 90%;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Event Title */
+.container h2 {
+    font-size: 28px;
+    color: #003399;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Event Details */
+#eventDetails {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+#eventDetails h3 {
+    font-size: 22px;
+    color: #0044cc;
+    margin-bottom: 10px;
+}
+
+#eventDetails p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Buttons */
+button, a {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin: 8px;
+}
+
+/* Register Button */
+#registerBtn {
+    background: #0044cc;
+    color: white;
+    border: none;
+}
+
+#registerBtn:hover {
+    background: #002d80;
+}
+
+/* Back to Dashboard Button */
+a {
+    background: #f44336;
+    color: white;
+    border: none;
+}
+
+a:hover {
+    background: #d32f2f;
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .close-btn {
+            background: #f44336;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Event Details</h2>
+        <div id="eventDetails">
+            <p>Loading event details...</p>
+        </div>
+        <button id="registerBtn">Register</button>
+        <a href="dashboard.html">Back to Dashboard</a>
+    </div>
+
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h3>Registration Successful!</h3>
+            <p>You have successfully registered for the event.</p>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get("id");
+
+            if (!eventId) {
+                document.getElementById("eventDetails").innerHTML = "<p>Invalid event ID.</p>";
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/events/${eventId}`);
+                const event = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(event.message);
+                }
+
+                document.getElementById("eventDetails").innerHTML = `
+                    <h3>${event.title}</h3>
+                    <p><strong>Date:</strong> ${new Date(event.date).toDateString()}</p>
+                    <p><strong>Location:</strong> ${event.location}</p>
+                    <p><strong>Organizer:</strong> ${event.organizer}</p>
+                    <p><strong>Description:</strong> ${event.description}</p>
+                    <p><strong>Attendees:</strong> ${event.attendees.length} people registered</p>
+                `;
+
+                document.getElementById("registerBtn").addEventListener("click", async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user || !user.email) {
+        alert("Please log in to register.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const registerResponse = await fetch(`http://localhost:5000/api/events/register/${eventId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email }) 
+        });
+
+        const registerData = await registerResponse.json();
+        if (!registerResponse.ok) throw new Error(registerData.message);
+
+        const modal = document.getElementById("successModal");
+        modal.style.display = "flex";
+
+        location.reload();
+    } catch (error) {
+        alert(error.message);
+    }
+});
+
+
+            } catch (error) {
+                document.getElementById("eventDetails").innerHTML = `<p>Error loading event details: ${error.message}</p>`;
+            }
+        });
+
+        function closeModal() {
+            document.getElementById("successModal").style.display = "none";
+        }
+    </script>
+</body>
+</html>

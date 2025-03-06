@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Physical Activities</title>
+  <style>
+   body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #1E90FF, #ADD8E6); 
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  padding: 50px 20px;
+  width: 100%;
+}
+
+.header h1 {
+  font-size: 3rem;
+  font-family: "Courier New", monospace; 
+  color: black; 
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  
+  /* New Box Styling */
+  display: inline-block;
+  padding: 10px 25px; 
+  border: 2px solid black; 
+  border-radius: 15px; 
+
+}
+
+.activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.activity {
+  position: relative;
+  display: block;
+  height: 220px;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.activity:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+    .activity:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .activity:nth-child(1) {
+      background-image: url('https://media.sciencephoto.com/f0/27/71/62/f0277162-800px-wm.jpg');
+    }
+
+    .activity:nth-child(2) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgsDYRtEysyE6sCOAQjNbP0XgsY9WtVyWk4w&s');
+    }
+
+    .activity:nth-child(3) {
+      background-image: url('https://udaipurtimes.com/static/c1e/client/74416/migrated/9240fa5cada59f1e797fbffd1c9ea730.jpg');
+    }
+
+    .activity:nth-child(4) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8E-MkCT5YBQIqTS1q9eaKAm3VCUp4B7uhqDqpZpulDBbQhCS3uHgHk8x-TjtRXNiySHQ&usqp=CAU');
+    }
+
+    .activity:nth-child(5) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG1ZuteUHTa43OMwEqlE_i4wcoOIpQXqZ4Ug&s');
+    }
+
+    .activity:nth-child(6) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqvvCNU2nIc7m3tVvwmjOle7yHzC56jzHmXw&s');
+    }
+
+    .activity:nth-child(7) {
+      background-image: url('https://c8.alamy.com/comp/ET0J8W/women-police-performing-malkhamb-indian-gymnastics-on-1-may-maharashtra-ET0J8W.jpg');
+    }
+
+    .activity:nth-child(8) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrWd_U_dIA2zSgZMnWCNoEmNTnZluPpiPR3A&s');
+    }
+
+    .activity:nth-child(9) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqacqJFAhMyQkOEpfDXpJyQKPwqnEZLxARzQ&s');
+    }
+
+    .activity:nth-child(10) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg7VkFr3NGjxLvexnSKOzCT28FBeM8Vw2ovw&s');
+    }
+
+   
+    
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>PHYSICAL</h1>
+  </div>
+  <div class="activities">
+    <a href="activity-details.html?activity=swimming" class="activity">
+      <div class="overlay">SWIMMING</div>
+    </a>
+    <a href="activity-details.html?activity=yoga" class="activity">
+      <div class="overlay">YOGA</div>
+    </a>
+    <a href="activity-details.html?activity=cricket" class="activity">
+      <div class="overlay">CRICKET</div>
+    </a>
+    <a href="activity-details.html?activity=gym" class="activity">
+      <div class="overlay">GYM</div>
+    </a>
+    <a href="activity-details.html?activity=horse-riding" class="activity">
+      <div class="overlay">HORSE RIDING</div>
+    </a>
+    <a href="activity-details.html?activity=martial-arts" class="activity">
+      <div class="overlay">MARTIAL ARTS</div>
+    </a>
+    <a href="activity-details.html?activity=malkhamb" class="activity">
+      <div class="overlay">MALKHAMB</div>
+    </a>
+    <a href="activity-details.html?activity=basketball" class="activity">
+      <div class="overlay">BASKETBALL</div>
+    </a>
+    <a href="activity-details.html?activity=archery" class="activity">
+      <div class="overlay">ARCHERY</div>
+    </a>
+    <a href="activity-details.html?activity=tennis" class="activity">
+      <div class="overlay">TENNIS</div>
+    </a>
+  </div>
+</body>
+</html>>

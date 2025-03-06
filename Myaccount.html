@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      transition: background 0.3s ease-in-out;
+      overflow: hidden; 
+    }
+
+    .account-container {
+      background: linear-gradient(to bottom right, rgba(88, 126, 138, 0.9), rgba(156, 209, 241, 0.9));
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      width: 100%; 
+      max-width: 1000px;
+      text-align: center;
+      font-weight: bolder;
+      font-size: larger;
+      position: relative;
+      transition: all 0.3s ease-in-out;
+      z-index: 1;
+      height: 80vh; 
+      overflow-y: auto; 
+    }
+
+    .info {
+      margin: 10px 0; 
+      font-size: 20px; 
+      color: #333;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      padding-bottom: 5px; 
+    }
+
+    .info .label {
+      color: #0056b3;
+      margin-right: 5px;
+      font-weight: bolder;
+    }
+
+    .info .value {
+      color: #bacef6;
+    }
+
+    .calendar-container {
+      margin-top: 10px; 
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+    .calendar-content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer; 
+    }
+
+    iframe {
+      width: 100%;
+      height: 300px;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .background-dim {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0);
+      backdrop-filter: blur(0px);
+      transition: background 0.4s ease-in-out, backdrop-filter 0.4s ease-in-out;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .calendar-expanded {
+      transform: scale(1.5);
+      width: 70vw;
+      height: 70vh;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .notes-container {
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .textarea-container {
+      position: relative;
+      width: 100%; 
+      max-width: 100%; 
+    }
+
+    textarea {
+      width: calc(100% - 30px); 
+      height: 100px;
+      padding: 12px 12px 12px 30px; 
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+      font-family: inherit;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: border 0.3s;
+      caret-color: transparent; 
+    }
+
+    textarea:focus {
+      border: 1px solid #007bff;
+      outline: none;
+    }
+
+    .pen-icon {
+      position: absolute;
+      left: 12px; 
+      top: 12px; 
+      pointer-events: none; 
+      font-size: 20px; 
+      transition: left 0.1s; 
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+      transition: background 0.3s;
+      background: #003366;
+      color: white;
+    }
+
+    .save-btn:hover {
+      background: #002244;
+    }
+
+    .modal {
+    display: none;
+    position: fixed;
+    z-index: 200;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+
+  .modal-content p {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .modal-content button {
+    padding: 8px 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  .modal-content button:hover {
+    background: #0056b3;
+  }
+  </style>
+</head>
+<body>
+  <div class="background-dim"></div>
+
+  <div class="account-container">
+    <h2>My Account</h2>
+    <p class="info"><span class="label">Name:</span> <span class="value" id="name">Loading...</span></p>
+    <p class="info"><span class="label">Fivefold:</span> <span class="value" id="fivefold">Loading...</span></p>
+    <p class="info"><span class="label">Time:</span> <span class="value">5pm to 7pm</span></p>
+    <p class="info"><span class="label">Working Days:</span> <span class="value">Wednesday to Monday</span></p>
+    
+    <div class="calendar-container">
+      <div class="calendar-content" onclick="toggleCalendar(event)">
+        <h2>Monthly Schedule</h2>
+      </div>
+      <iframe id="calendarIframe" src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FKolkata"></iframe>
+    </div>
+
+    <div class="notes-container">
+      <h2>Important Updates</h2>
+      <div class="textarea-container">
+        <div class="pen-icon">🖊️</div> <!-- Pen icon -->
+        <textarea id="notes" placeholder="Write your updates here..." oninput="movePenIcon()"></textarea>
+      </div>
+      <button class="save-btn" onclick="saveNotes()">Save</button>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <p>Update saved successfully!</p>
+    <button onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+  <script>
+    let isCalendarExpanded = false; // Track calendar state
+    
+    function movePenIcon() {
+      const textarea = document.getElementById('notes');
+      const penIcon = document.querySelector('.pen-icon');
+      const textBeforeCaret = textarea.value.substring(0, textarea.selectionStart);
+    
+      // Create a temporary span to measure the width of the text
+      const span = document.createElement('span');
+      span.style.visibility = 'hidden';
+      span.style.whiteSpace = 'pre';
+      span.style.font = getComputedStyle(textarea).font;
+      span.textContent = textBeforeCaret;
+      document.body.appendChild(span);
+    
+      
+      const textWidth = span.offsetWidth;
+    
+      
+      penIcon.style.left = `${textWidth + 12}px`; 
+    
+     
+      document.body.removeChild(span);
+    }
+    
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const faculty = JSON.parse(localStorage.getItem("faculty"));
+    
+      if (!user) {
+        alert("You must log in first!");
+        window.location.href = "index.html";
+        return;
+      }
+    
+      
+      if (faculty) {
+        document.getElementById("name").textContent = faculty.name || "N/A";
+        document.getElementById("fivefold").textContent = faculty.fivefold || "N/A";
+      }
+    
+      
+      if (user.role === "student") {
+        try {
+          const response = await fetch(`http://localhost:5000/api/updates/${user.name}`);
+          const updates = await response.json();
+          
+          if (updates.length === 0) {
+            document.getElementById("updatesContainer").innerHTML = "<p>No updates available.</p>";
+          } else {
+            document.getElementById("updatesContainer").innerHTML = updates
+              .map(update => `<p><strong>${update.name}:</strong> ${update.note}</p>`)
+              .join("");
+          }
+        } catch (error) {
+          console.error("Error fetching updates:", error);
+        }
+      }
+    });
+    
+    function saveNotes() {
+    const faculty = JSON.parse(localStorage.getItem("faculty"));
+    const note = document.getElementById("notes").value;
+
+    if (!note.trim()) {
+      alert("Please enter a note before saving!");
+      return;
+    }
+
+    fetch("http://localhost:5000/api/updates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: faculty.name,
+        fivefold: faculty.fivefold,
+        note: note,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        openModal(); 
+      })
+      .catch((error) => console.error("Error saving notes:", error));
+  }
+
+  function openModal() {
+    document.getElementById("successModal").style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("successModal").style.display = "none";
+  }
+    function toggleCalendar(event) {
+      event.stopPropagation(); 
+    
+      const iframe = document.getElementById('calendarIframe');
+      const backgroundDim = document.querySelector('.background-dim');
+    
+      if (isCalendarExpanded) {
+        // Zoom out
+        iframe.classList.remove('calendar-expanded');
+        backgroundDim.style.pointerEvents = 'none'; 
+        backgroundDim.style.background = 'rgba(0, 0, 0, 0)'; 
+      } else {
+        // Zoom in
+        iframe.classList.add('calendar-expanded');
+        backgroundDim.style.pointerEvents = 'all'; 
+        backgroundDim.style.background = 'rgba(0, 0, 0, 0.5)'; 
+      }
+    
+      isCalendarExpanded = !isCalendarExpanded; 
+    }
+    
+    
+    document.addEventListener('click', function(event) {
+      const calendarContainer = document.querySelector('.calendar-container');
+      if (isCalendarExpanded && !calendarContainer.contains(event.target)) {
+        toggleCalendar(event);
+      }
+    });
+    
+    function logout() {
+      localStorage.removeItem("user");
+      localStorage.removeItem("faculty");
+      alert("You have been logged out!");
+      window.location.href = "index.html";
+    }
+    </script>
+    
+  
+  
+</body>
+</html>

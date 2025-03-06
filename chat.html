@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(#405054, #d7e3e7);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h2, h3 {
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #chatContainer {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            height: 700px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        #facultySection {
+            width: 30%;
+            padding: 10px;
+            background: #d7e3e7;
+            border-right: 2px solid #405054;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+          
+            overflow-y: auto;
+        }
+
+        #facultySearch {
+    width: 90%; 
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    align-self: center; 
+}
+
+#facultyList {
+    flex-grow: 1; 
+    overflow-y: auto;
+    width: 100%; 
+}
+
+        .faculty-item {
+            padding: 10px;
+            margin: 5px;
+            background: #70a1ff;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 90%;
+            transition: 0.3s;
+        }
+
+        .faculty-item:hover {
+            background: #1e90ff;
+        }
+
+        #chatSection {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        #chatBox {
+            height: 85%;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .sender {
+            background: #7bed9f;
+            align-self: flex-end;
+            text-align: right;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 10px 10px 0 10px;
+        }
+
+        .receiver {
+            background: #70a1ff;
+            align-self: flex-start;
+            text-align: left;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 10px 10px 10px 0;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            padding: 10px 15px;
+            background: rgb(10, 58, 81);
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: rgb(50, 118, 167);
+        }
+
+        .date-header {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 12px;
+    font-weight: bold;
+    color: gray;
+    background: #f0f0f0;
+    padding: 5px;
+    border-radius: 10px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.timestamp {
+    font-size: 10px;
+    color: gray;
+    display: block;
+    text-align: right;
+    margin-top: 2px;
+}
+
+
+.message {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 5px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.sender {
+    background: #467d1b;
+    align-self: flex-end;
+}
+
+.receiver {
+    background: #522525;
+    align-self: flex-start;
+}
+
+.timestamp {
+    display: block;
+    font-size: 10px;
+    text-align: right;
+    color: rgb(255, 255, 255);
+    margin-top: 3px;
+}
+
+
+
+    </style>
+</head>
+<body>
+    <h2 id="welcomeMessage">Welcome, </h2>
+    <h3 id="chatWith">Chat with Faculty</h3>  <!-- 🔹 Dynamic Faculty Name Update -->
+    
+    <div id="chatContainer">
+        <div id="facultySection">
+            <input type="text" id="facultySearch" placeholder="Search faculty..." onkeyup="filterFacultyList()" />
+            <div id="facultyList"></div> <!-- 🔹 Faculty list will be inside this -->
+        </div>
+        <div id="chatSection">
+            <div id="chatBox"></div>
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+<script>
+        const socket = io("http://localhost:5000");
+let selectedFacultyEmail = null;
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const studentName = localStorage.getItem("studentName") || "Student";
+    document.getElementById("welcomeMessage").textContent = `Welcome, ${studentName}`;
+});
+
+
+fetch(`http://localhost:5000/api/chats/faculty-list?studentEmail=${localStorage.getItem("studentEmail")}`)
+    .then(res => res.json())
+    .then(facultyList => {
+        renderFacultyList(facultyList);
+    })
+    .catch(error => console.error("Error fetching faculty list:", error));
+
+    function renderFacultyList(facultyList) {
+    const facultyListDiv = document.getElementById("facultyList");
+    facultyListDiv.innerHTML = ""; 
+
+    facultyList.forEach(faculty => {
+        let div = document.createElement("div");
+        div.classList.add("faculty-item");
+        div.textContent = faculty.name;
+
+        let badge = null; 
+
+        if (faculty.unreadCount > 0) {
+            badge = document.createElement("span");
+            badge.textContent = faculty.unreadCount;
+            badge.style.background = "red";
+            badge.style.color = "white";
+            badge.style.padding = "3px 8px";
+            badge.style.borderRadius = "50%";
+            badge.style.marginLeft = "10px";
+            div.appendChild(badge);
+        }
+
+        div.onclick = () => {
+            selectFaculty(faculty.email, faculty.name);
+            if (badge) badge.style.display = "none"; 
+        };
+
+        facultyListDiv.appendChild(div); 
+    });
+}
+
+
+function filterFacultyList() {
+    const searchQuery = document.getElementById("facultySearch").value.toLowerCase();
+    const facultyItems = document.querySelectorAll("#facultyList .faculty-item");
+
+    facultyItems.forEach(item => {
+        const facultyName = item.textContent.toLowerCase();
+        item.style.display = facultyName.includes(searchQuery) ? "block" : "none";
+    });
+}
+
+
+function selectFaculty(email, name) {
+    selectedFacultyEmail = email;
+    document.getElementById("chatWith").textContent = `Chat with ${name}`; 
+    loadChatHistory();
+
+    fetch("/api/chats/mark-as-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentEmail: localStorage.getItem("studentEmail"), facultyEmail: selectedFacultyEmail })
+    }).then(() => {
+        loadChatHistory();
+        updateFacultyList();
+    });
+}
+
+function sendMessage() {
+    if (!selectedFacultyEmail) {
+        alert("Please select a faculty member first!");
+        return;
+    }
+
+    const studentEmail = localStorage.getItem("studentEmail");
+    const messageInput = document.getElementById("messageInput");
+
+    const messageData = {
+        senderEmail: studentEmail,
+        receiverEmail: selectedFacultyEmail,
+        message: messageInput.value
+    };
+
+    socket.emit("sendMessage", messageData);
+    messageInput.value = "";
+}
+
+socket.on("receiveMessage", (data) => {
+    displayMessage(data);
+    updateFacultyList();
+});
+function displayMessage(data) {
+    const chatBox = document.getElementById("chatBox");
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message");
+    messageElement.classList.add(data.senderEmail === localStorage.getItem("studentEmail") ? "sender" : "receiver");
+
+    const messageDate = new Date(data.timestamp);
+
+    // Format: 25 Feb 2025
+    const formattedDate = messageDate.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+
+    // Format: 08:51 AM
+    const formattedTime = messageDate.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+
+    // Check if a new date header is needed
+    if (!chatBox.lastChild || chatBox.lastChild.dataset.date !== formattedDate) {
+        const dateHeader = document.createElement("div");
+        dateHeader.classList.add("date-header");
+        dateHeader.textContent = formattedDate;
+        dateHeader.dataset.date = formattedDate;
+        chatBox.appendChild(dateHeader);
+    }
+
+    // Append message with timestamp
+    messageElement.innerHTML = `<p>${data.message}</p><span class="timestamp">${formattedTime}</span>`;
+    messageElement.dataset.date = formattedDate;
+    chatBox.appendChild(messageElement);
+
+    // Auto-scroll to the latest message
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+
+
+function loadChatHistory() {
+    const studentEmail = localStorage.getItem("studentEmail");
+    if (!selectedFacultyEmail) return;
+
+    fetch(`/api/chats/history?studentEmail=${studentEmail}&facultyEmail=${selectedFacultyEmail}`)
+        .then(response => response.json())
+        .then(messages => {
+            document.getElementById("chatBox").innerHTML = "";
+            messages.forEach(displayMessage);
+        })
+        .catch(error => console.error("Error loading chat history:", error));
+}
+
+function renderChatMessages(messages) {
+    const chatBox = document.getElementById("chatBox");
+    chatBox.innerHTML = "";
+    let lastDate = "";
+
+    messages.forEach(msg => {
+        const messageDate = new Date(msg.timestamp).toLocaleDateString("en-IN", {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+
+        if (messageDate !== lastDate) {
+            lastDate = messageDate;
+            const dateHeader = document.createElement("div");
+            dateHeader.classList.add("date-header");
+            dateHeader.textContent = messageDate;
+            chatBox.appendChild(dateHeader);
+        }
+
+        displayMessage(msg);
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function updateFacultyList() {
+    const studentEmail = localStorage.getItem("studentEmail");
+    fetch(`/api/chats/faculty-list?studentEmail=${studentEmail}`)
+        .then(res => res.json())
+        .then(facultyList => {
+            if (!Array.isArray(facultyList)) {
+                console.error("Invalid response format:", facultyList);
+                return;
+            }
+            renderFacultyList(facultyList);
+        })
+        .catch(error => console.error("Error updating faculty list:", error));
+}
+
+
+</script>
+</body>
+</html>

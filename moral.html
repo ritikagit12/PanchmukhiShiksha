@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moral Values</title>
+  <style>
+   body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #1E90FF, #ADD8E6); 
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  padding: 50px 20px;
+  width: 100%;
+}
+
+.header h1 {
+  font-size: 3rem;
+  font-family: "Courier New", monospace; 
+  color: black; 
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  
+ 
+  display: inline-block;
+  padding: 10px 25px; 
+  border: 2px solid black; 
+  border-radius: 15px; 
+
+}
+
+.activities {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.activity {
+  position: relative;
+  display: block;
+  height: 220px;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.activity:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+    
+    .activity:nth-child(1) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTV77fm-Jw1ImwrL_kFC43hYO6eRMGYCHV0mg&s');
+    }
+
+    .activity:nth-child(2) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_2IcHMTvA_EAZvSIDLglJa4S25sJS6wfdVg&s');
+    }
+
+    .activity:nth-child(3) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMnLAgjpKZcOfsXJayRF8152pEr238WRNSlQ&s');
+    }
+
+    .activity:nth-child(4) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3Hl-W-_Y-T2gGB7JsO8hD72xIhcZTUuS0mA&s');
+    }
+
+    .activity:nth-child(5) {
+      background-image: url('https://images.shiksha.com/mediadata/images/1531983089phpJ1SEJi.jpeg');
+    }
+
+    .activity:nth-child(6) {
+      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZydOng6lPoFVkI69SS7UGGYAERbyIhGao3g&s');
+    }
+
+   
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>MORAL</h1>
+  </div>
+  <div class="activities">
+    <a href="javascript:void(0);" class="activity" onclick="fetchActivity('BANASTHALI CAMPUS ETHICS')">
+      <div class="overlay">BANASTHALI CAMPUS ETHICS</div>
+    </a>
+    <a href="javascript:void(0);" class="activity" onclick="fetchActivity('KHADI WEARING')">
+      <div class="overlay">KHADI WEARING</div>
+    </a>
+    <a href="javascript:void(0);" class="activity" onclick="fetchActivity('DISCIPLINE')">
+      <div class="overlay">DISCIPLINE</div>
+    </a>
+    <a href="javascript:void(0);" class="activity" onclick="fetchActivity('SOCIAL BEHAVIOUR')">
+      <div class="overlay">SOCIAL BEHAVIOUR</div>
+    </a>
+    <a href="javascript:void(0);" class="activity" onclick="fetchActivity('PARTICIPATION IN VIDYAPITH ACTIVITIES')">
+      <div class="overlay">PARTICIPATION IN VIDYAPITH ACTIVITIES</div>
+    </a>
+    <a href="javascript:void(0);" class="activity" onclick="fetchActivity('PARTICIPATION IN NATIONAL AND CULTURAL FESTIVALS')">
+      <div class="overlay">PARTICIPATION IN NATIONAL AND CULTURAL FESTIVALS</div>
+    </a>
+  </div>
+</body>
+</html>

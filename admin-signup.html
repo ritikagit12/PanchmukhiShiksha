@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: url('bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+
+    h1 {
+      display: inline-block;
+      background-color: rgba(97, 96, 96, 0.3);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(97, 96, 96, 0.3);
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: rgba(101, 122, 225, 0.9); 
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-container input,
+    .form-container select {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-container button:hover {
+      background-color: #003d80;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Sign Up</h1>
+  </header>
+  <div class="form-container">
+    <form action="http://localhost:5000/api/admin/submit-admin-signup" method="POST">
+      <input type="text" name="name" placeholder="Enter Name" required>
+      <input type="email" name="email" placeholder="Enter Email" required>
+      <input type="tel" name="phone" placeholder="Enter Phone Number" required>
+      <input type="text" name="adminId" placeholder="Enter Admin ID" required>
+      <input type="password" name="password" placeholder="Enter Password" required>
+      <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+      
+      <!-- Security Question Section -->
+      <select name="securityQuestion" required>
+        <option value="" disabled selected>Select a Security Question</option>
+        <option value="mother_maiden_name">What is your mother's maiden name?</option>
+        <option value="pet_name">What was the name of your first pet?</option>
+        <option value="favorite_teacher">Who was your favorite teacher in school?</option>
+        <option value="birth_city">In which city were you born?</option>
+      </select>
+      <input type="text" name="securityAnswer" placeholder="Enter Answer" required>
+      
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+</body>
+</html>

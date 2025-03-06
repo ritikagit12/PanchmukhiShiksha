@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            display: flex; 
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            width: 800px; 
+            height: 500px; 
+            animation: fadeIn 0.5s ease-in-out;
+            color: black;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .form-container {
+            flex: 2; 
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            transition: border 0.3s;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        input:focus {
+            border: 1px solid #80bdff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        button {
+            background: #0056b3;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background: #004085;
+            transform: translateY(-2px);
+        }
+        .cancel-btn {
+            background: #dc3545;
+        }
+        .cancel-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="https://cdni.iconscout.com/illustration/premium/thumb/edit-social-media-profile-illustration-download-in-svg-png-gif-file-formats--user-web-people-with-illustrations-pack-network-communication-4412910.png" alt="Illustration">
+        </div>
+        <div class="form-container">
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm" onsubmit="updateProfile(event)">
+                <label for="username">BANASTHALI ID</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" name="phone" required>
+
+                <button type="submit">Update Profile</button>
+            </form>
+
+            <button class="cancel-btn" onclick="goBack()">Cancel</button>
+        </div>
+    </div>
+    <script>
+        // Fetch User Details from LocalStorage and Pre-fill Form
+        document.addEventListener("DOMContentLoaded", async () => {
+            const faculty = JSON.parse(localStorage.getItem("faculty"));
+
+            if (faculty) {
+                document.getElementById("username").value = faculty.username; // Readonly
+                document.getElementById("name").value = faculty.name;
+               // document.getElementById("email").value = student.email;
+                document.getElementById("phone").value = faculty.phone;
+            } else {
+                alert("No faculty data found!");
+                window.location.href = "dashboard2.html";
+            }
+        });
+
+        // Handle Form Submission (Update Profile)
+        document.getElementById("editProfileForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value;
+   // const email = document.getElementById("email").value; 
+    const phone = document.getElementById("phone").value;
+    const username = document.getElementById("username").value; // Readonly
+    try {
+    const response = await fetch(`http://localhost:5000/api/updateFaculty/${username}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone }),
+    });
+
+    //  Check for valid JSON response
+    const text = await response.text();  
+    console.log("Response text:", text); 
+
+    //  Try parsing JSON
+    const data = JSON.parse(text);
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to update profile");
+    }
+
+    let updatedFaculty = JSON.parse(localStorage.getItem("faculty")) || {};
+    updatedFaculty.name = name;
+    updatedFaculty.phone = phone;
+    localStorage.setItem("faculty", JSON.stringify(updatedFaculty));
+
+    alert("Profile updated successfully!");
+    window.location.href = "dashboard2.html";  // Redirect after update
+
+} catch (error) {
+    console.error("Error updating profile:", error);
+    alert("Error updating profile: " + error.message);
+}
+
+});
+
+        // Go Back to Dashboard
+        function goBack() {
+            window.location.href = "dashboard2.html";
+        }
+    </script>
+</body>
+</html>
